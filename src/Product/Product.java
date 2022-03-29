@@ -1,6 +1,29 @@
 package Product;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+
+class PriceComparator implements Comparator<Product>{
+    @Override
+    public int compare(Product p1, Product p2) {
+        return Float.compare(p1.getPrice(), p2.getPrice());
+    }
+}
+
+class NameComparator implements Comparator<Product>{
+    @Override
+    public int compare(Product p1, Product p2) {
+        return p1.getProductName().compareTo(p2.getProductName());
+    }
+}
+
+class CategoryComparator implements Comparator<Product> {
+    @Override
+    public int compare(Product p1, Product p2) {
+        return p1.getCategory().compareTo(p2.getCategory());
+    }
+}
+
 
 public class Product {
     private static int productCount;
@@ -8,6 +31,7 @@ public class Product {
     private float price;
     private String productName;
     private ProductCategory category;
+
 
     static {
         productCount = 0;
@@ -30,6 +54,10 @@ public class Product {
 
     public float getPrice() {
         return price;
+    }
+
+    public ProductCategory getCategory() {
+        return category;
     }
 
     public void setPrice(float price) {
