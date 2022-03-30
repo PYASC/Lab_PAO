@@ -21,13 +21,22 @@ public class ProductService {
         products.remove(p);
     }
     public static void removeProduct(int index) {
-        products.remove(index);
+        try {
+            products.remove(index);
+        }
+        catch (IndexOutOfBoundsException e){
+            System.out.println("Index out of bounds.");
+        }
     }
 
     public static void updateProductPrice(int index, float newPrice) {
-        products.get(index).setPrice(newPrice);
+        try {
+            products.get(index).setPrice(newPrice);
+        }
+        catch (IndexOutOfBoundsException e) {
+            System.out.println("Index out of bounds.");
+        }
     }
-
     public static List<Product> getProducts() {
         return new ArrayList<Product>(products);
     }
@@ -53,7 +62,12 @@ public class ProductService {
     }
 
     public static void removeCategory(int index) {
-        categories.remove(index);
+        try {
+            categories.remove(index);
+        }
+        catch (IndexOutOfBoundsException e) {
+            System.out.println("Index out of bounds.");
+        }
     }
 
     public static List<ProductCategory> getCategories() {
