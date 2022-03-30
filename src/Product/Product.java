@@ -37,6 +37,12 @@ public class Product {
         productCount = 0;
     }
 
+    public Product(float price, String productName) {
+        this.productId = ++ Product.productCount;
+        this.price = price;
+        this.productName = productName;
+    }
+
     public Product(float price, String productName, ProductCategory category) {
         this.productId = ++ Product.productCount;
         this.price = price;
@@ -71,5 +77,9 @@ public class Product {
         return productName;
     }
 
+    @Override
+    public String toString() {
+        return "Product Name: " + this.productName + "\nPrice: " + this.price + "\nCategory: " + this.category.toString() + "\n";
+    }
 
 }

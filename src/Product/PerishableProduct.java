@@ -20,5 +20,9 @@ public class PerishableProduct extends Product{
         return this.expiringDate.before(new Date());
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "Expires at:" + this.expiringDate.toString() + "\n";
+    }
 
 }
