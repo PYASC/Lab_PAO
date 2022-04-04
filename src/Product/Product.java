@@ -2,6 +2,7 @@ package Product;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Objects;
 
 class PriceComparator implements Comparator<Product>{
     @Override
@@ -25,12 +26,12 @@ class CategoryComparator implements Comparator<Product> {
 }
 
 
-public class Product {
+public abstract class Product {
     private static int productCount;
     private final int productId;
     private float price;
-    private String productName;
-    private ProductCategory category;
+    private final String productName;
+    private final ProductCategory category;
 
 
     static {
@@ -38,9 +39,10 @@ public class Product {
     }
 
     public Product(float price, String productName) {
-        this.productId = ++ Product.productCount;
+        this.productId = ++Product.productCount;
         this.price = price;
         this.productName = productName;
+        this.category = null;
     }
 
     public Product(float price, String productName, ProductCategory category) {
@@ -82,4 +84,16 @@ public class Product {
         return "Product Name: " + this.productName + "\nPrice: " + this.price + "\nCategory: " + this.category.toString() + "\n";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+        Product product = (Product) o;
+        return productId == product.productId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId);
+    }
 }

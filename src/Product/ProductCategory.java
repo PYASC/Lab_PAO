@@ -3,7 +3,7 @@ package Product;
 import org.jetbrains.annotations.NotNull;
 
 public class ProductCategory implements Comparable<ProductCategory>{
-    private String categoryName;
+    private final String categoryName;
 
     public ProductCategory(String categoryName) {
         this.categoryName = categoryName;

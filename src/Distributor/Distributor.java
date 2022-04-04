@@ -8,9 +8,12 @@ import java.util.Set;
 public class Distributor {
     private String name;
     private Set<Product> products; // products that the distributor has to offer
+    private float discount; // when buying from this distributor the store only pays (1-discount)*price for a certain product
 
-    public Distributor(String name) {
+
+    public Distributor(String name, float discount) {
         this.name = name;
+        this.discount = discount;
         products = new HashSet<Product>();
     }
 

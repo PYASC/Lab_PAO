@@ -7,16 +7,13 @@ public class Main {
 
     public static void main(String[] args) {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, 15);
+
         ProductService.addCategory(new ProductCategory("DairyProducts"));
         ProductService.addCategory(new ProductCategory("Meat"));
-        ProductService.addProduct(new PerishableProduct(15.8f, "Chicken Wings", ProductService.getCategories().get(1), calendar.getTime()));
 
-        calendar.add(Calendar.DATE, 5);
-        ProductService.addProduct(new PerishableProduct(20.25f, "Pork Ribs", ProductService.getCategories().get(1), calendar.getTime()));
-        calendar.add(Calendar.DATE, -17);
-        ProductService.addProduct(new PerishableProduct(4.5f, "Milk", ProductService.getCategories().get(0), calendar.getTime()));
-        calendar.add(Calendar.DATE, -3);
+//        ProductService.addProduct(new PerishableProduct(15.8f, "Chicken Wings", ProductService.getCategories().get(1), 15));
+//        ProductService.addProduct(new PerishableProduct(20.25f, "Pork Ribs", ProductService.getCategories().get(1), 17));
+//        ProductService.addProduct(new PerishableProduct(4.5f, "Milk", ProductService.getCategories().get(0), 3));
 
 
         menu();
@@ -29,9 +26,9 @@ public class Main {
         Calendar calendar = Calendar.getInstance();
 
         int opt, d;
-        int index=0;
-        float p=0;
-        String s=null;
+        int index;
+        float p;
+        String s;
 
         while(true){
 
@@ -65,7 +62,7 @@ public class Main {
                     }
                     index = Integer.parseInt(in.nextLine());
 
-                    ProductService.addProduct(new Product(p, s, ProductService.getCategories().get(index-1)));
+                    ///ProductService.addProduct(new Product(p, s, ProductService.getCategories().get(index-1)));
                     break;
                 case 3:
                     System.out.println("Product name:");
@@ -80,7 +77,7 @@ public class Main {
                     System.out.println("Days till the product expires:");
                     d = Integer.parseInt(in.nextLine());
                     calendar.add(Calendar.DATE, d);
-                    ProductService.addProduct(new PerishableProduct(p, s, ProductService.getCategories().get(index-1), calendar.getTime()));
+                    /// ProductService.addProduct(new PerishableProduct(p, s, ProductService.getCategories().get(index-1), d));
                     calendar.add(Calendar.DATE, -d);
                     break;
                 case 4:

@@ -8,4 +8,8 @@ public class PremiumClient extends Client{
         super(email, name, age);
         this.discount = discount;
     }
+
+    public float getDiscount() {
+        return discount;
+    }
 }
