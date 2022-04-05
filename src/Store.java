@@ -1,12 +1,45 @@
-import Product.*;
+import Client.Client;
+import Distributor.Distributor;
+import Product.Product;
+import Product.ProductBatch;
+import Product.ProductCategory;
+import Product.ProductService;
 
 import java.util.*;
 
 
-public class Main {
+public class Store {
 
+    private final List<Product> products; /// all the products that the store could have for sale
+    private final List<Distributor> distributors; /// list of all the distributors the store can buy batches from
+    private final IStockService stockService; /// turn into an actual class and
+    private final List<Client> clients; /// list of all the registered clients ; later an Order class to save the sales
+
+    private static Store store = null;
+
+    private Store() {
+        this.products = new ArrayList<Product>();
+        this.distributors = new ArrayList<Distributor>();
+        this.stockService = new StockService();
+        this.clients = new ArrayList<Client>();
+    }
+
+    public static Store getInstance(){
+        if(Store.store == null)
+            Store.store = new Store();
+        return store;
+    }
     public static void main(String[] args) {
-        Calendar calendar = Calendar.getInstance();
+
+        Store store = Store.getInstance();
+        Store.init();
+        Store.menu();
+
+    }
+
+    private static void init(){
+        if(Store.store == null)
+            return; // mby throw a custom instance not initialized error;
 
         ProductService.addCategory(new ProductCategory("DairyProducts"));
         ProductService.addCategory(new ProductCategory("Meat"));
@@ -15,13 +48,11 @@ public class Main {
 //        ProductService.addProduct(new PerishableProduct(20.25f, "Pork Ribs", ProductService.getCategories().get(1), 17));
 //        ProductService.addProduct(new PerishableProduct(4.5f, "Milk", ProductService.getCategories().get(0), 3));
 
-
-        menu();
-
     }
 
-    public static void menu() {
-
+    private static void menu() {
+        if(Store.store == null)
+            return;
         Scanner in = new Scanner(System.in);
         Calendar calendar = Calendar.getInstance();
 

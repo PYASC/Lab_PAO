@@ -1,14 +1,16 @@
 package Distributor;
 
 import Product.Product;
+import Product.ProductBatch;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Distributor {
-    private String name;
-    private Set<Product> products; // products that the distributor has to offer
-    private float discount; // when buying from this distributor the store only pays (1-discount)*price for a certain product
+public class Distributor implements IDistributor{
+    private final String name;
+    private final Set<Product> products; // products that the distributor has to offer
+    private final float discount; // when buying from this distributor the store only pays (1-discount)*price for a certain product
 
 
     public Distributor(String name, float discount) {
@@ -21,11 +23,25 @@ public class Distributor {
         return name;
     }
 
-    public Set<Product> getProducts() {
-        return new HashSet<Product>(products);
-    }
+//    public Set<Product> getProducts() {
+//        return new HashSet<Product>(products);
+//    }
 
     public void addProduct(Product product) {
         this.products.add(product);
+    }
+
+    @Override
+    public boolean hasProduct(Product product) {
+        for(Product p: this.products){
+            if(product.equals(p))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public ProductBatch orderProductBatch(Product product, float quantity) {
+        return new ProductBatch(product, LocalDate.now(), quantity, this);
     }
 }

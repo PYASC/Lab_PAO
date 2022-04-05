@@ -1,20 +1,27 @@
 package Product;
 
+import Distributor.Distributor;
+
 import java.time.LocalDate;
 
 public class ProductBatch {
     private final Product product;
     private final LocalDate productionDate;
     private float quantity;
+    private final Distributor distributor;
 
-    public ProductBatch(Product product, LocalDate productionDate, float quantity) {
+    public ProductBatch(Product product, LocalDate productionDate, float quantity, Distributor distributor) {
         this.product = product;
         this.productionDate = productionDate;
         this.setQuantity(quantity);
+        this.distributor = distributor;
     }
 
     public Product getProduct() {
         return product;
+    }
+    public Distributor getDistributor() {
+        return distributor;
     }
 
     public float getQuantity() {

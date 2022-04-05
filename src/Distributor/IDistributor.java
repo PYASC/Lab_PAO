@@ -7,5 +7,5 @@ public interface IDistributor {
 
     boolean hasProduct(Product product);
 
-    ProductBatch orderProductBatch(Product product, float quantity); // return the cost of the order
+    ProductBatch orderProductBatch(Product product, float quantity); // mby also return the cost of the order somehow
 }
