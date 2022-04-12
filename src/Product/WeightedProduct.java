@@ -17,4 +17,11 @@ public class WeightedProduct extends Product{ // The price is considered price p
         super(p);
         this.measuringUnit = measuringUnit;
     }
+
+    @Override
+    public String toString() {
+        return "WeightedProduct{" +
+                "measuringUnit=" + measuringUnit +
+                "} " + super.toString();
+    }
 }

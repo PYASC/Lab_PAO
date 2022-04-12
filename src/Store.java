@@ -1,27 +1,38 @@
 import Client.Client;
 import Distributor.Distributor;
+import Distributor.IDistributorService;
+import Distributor.DistributorService;
 import Product.Product;
 import Product.ProductBatch;
+import Product.UnitaryProduct;
+import Product.WeightedProduct;
+import Product.PerishableUP;
+import Product.PerishableWP;
 import Product.ProductCategory;
+import Product.MeasuringUnit;
+import Product.IProductService;
 import Product.ProductService;
+import Product.IStock;
+import Product.Stock;
 
 import java.util.*;
 
 
 public class Store {
-
-    private final List<Product> products; /// all the products that the store could have for sale
-    private final List<Distributor> distributors; /// list of all the distributors the store can buy batches from
-    private final IStockService stockService; /// turn into an actual class and
-    private final List<Client> clients; /// list of all the registered clients ; later an Order class to save the sales
+    private final List<ProductCategory> productCategories;
+    private final IProductService productsService;
+    private final IDistributorService distributorService;
+    private final IStock stock;
+    //private final List<Client> clients;
 
     private static Store store = null;
 
     private Store() {
-        this.products = new ArrayList<Product>();
-        this.distributors = new ArrayList<Distributor>();
-        this.stockService = new StockService();
-        this.clients = new ArrayList<Client>();
+        this.productCategories = new ArrayList<ProductCategory>();
+        this.productsService = new ProductService();
+        this.distributorService = new DistributorService();
+        this.stock = new Stock();
+        //this.clients = new ArrayList<Client>();
     }
 
     public static Store getInstance(){
@@ -31,30 +42,69 @@ public class Store {
     }
     public static void main(String[] args) {
 
-        Store store = Store.getInstance();
-        Store.init();
-        Store.menu();
+        getInstance();
+        store.init();
+        /*System.out.println(store.productsService.getProducts());
+        System.out.println(store.productCategories);
+        System.out.println(store.distributorService.getDistributors());
+        System.out.println(store.stock.getProductsInStock());
+
+        Product p = (Product) ListingItems.pick(store.productsService.getProducts());
+        System.out.println("Picked Product: " + p.toString());*/
+
+        try {
+            store.menu();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*finally { /// used for saving to csv and db later
+            //Store.saveCSV();
+            //Store.saveDB();
+        }*/
+
+
 
     }
 
-    private static void init(){
-        if(Store.store == null)
-            return; // mby throw a custom instance not initialized error;
+    private void init(){
 
-        ProductService.addCategory(new ProductCategory("DairyProducts"));
-        ProductService.addCategory(new ProductCategory("Meat"));
+        productCategories.add(new ProductCategory("DairyProducts"));
+        productCategories.add(new ProductCategory("Meat"));
+        productCategories.add(new ProductCategory("Honey"));
+        productCategories.add(new ProductCategory("Furniture"));
 
-//        ProductService.addProduct(new PerishableProduct(15.8f, "Chicken Wings", ProductService.getCategories().get(1), 15));
-//        ProductService.addProduct(new PerishableProduct(20.25f, "Pork Ribs", ProductService.getCategories().get(1), 17));
-//        ProductService.addProduct(new PerishableProduct(4.5f, "Milk", ProductService.getCategories().get(0), 3));
+        productsService.addProduct(new PerishableWP(25.49f, "Grounded Beef", productCategories.get(1), MeasuringUnit.KG, 7));
+        productsService.addProduct(new PerishableUP(4.5f, "Milk bottle", productCategories.get(0),3));
+        productsService.addProduct(new UnitaryProduct(44.5f, "Wild Honey 450g", productCategories.get(2)));
+        productsService.addProduct(new PerishableUP(28f, "Smoked pork ribs", productCategories.get(1),28));
+        productsService.addProduct(new UnitaryProduct(140f, "Simple Chair", productCategories.get(3)));
+        productsService.addProduct(new UnitaryProduct(450f, "Coffee table", productCategories.get(3)));
+
+        distributorService.addDistributor(new Distributor("HLB", 0.08f));
+        distributorService.addDistributor(new Distributor("La 45 de pasi", 0.1f));
+        distributorService.addDistributor(new Distributor("Mini Image", 0.15f));
+
+        List<Distributor> d = distributorService.getDistributors();
+        d.get(0).addProduct(productsService.getProducts().get(0));
+        d.get(0).addProduct(productsService.getProducts().get(2));
+        d.get(0).addProduct(productsService.getProducts().get(3));
+
+
+        d.get(1).addProduct(productsService.getProducts().get(1));
+        d.get(1).addProduct(productsService.getProducts().get(4));
+
+        d.get(2).addProduct(productsService.getProducts().get(5));
+        d.get(2).addProduct(productsService.getProducts().get(1));
+
+        stock.supplyProduct(distributorService.orderProductBatch(productsService.getProducts().get(3), 2f));
+        stock.supplyProduct(distributorService.orderProductBatch(productsService.getProducts().get(1), 2f));
+        stock.supplyProduct(distributorService.orderProductBatch(productsService.getProducts().get(4), 2f));
 
     }
 
-    private static void menu() {
-        if(Store.store == null)
-            return;
+    private void menu() {
+
         Scanner in = new Scanner(System.in);
-        Calendar calendar = Calendar.getInstance();
 
         int opt, d;
         int index;
@@ -63,90 +113,65 @@ public class Store {
 
         while(true){
 
-            System.out.println("1. Show products");
-            System.out.println("2. Add Product");
-            System.out.println("3. Add Perishable Product");
-            System.out.println("4. Remove Product");
-            System.out.println("5. Update Product Price");
-            System.out.println("6. Show categories");
-            System.out.println("7. Add category");
-            System.out.println("8. Sort Products by Name");
-            System.out.println("9. Sort Products by Price");
-            System.out.println("10. Sort Products by Category Name");
-            System.out.println("Option: ");
-            opt =  Integer.parseInt(in.nextLine());
+            System.out.println("1. Show all products sorted by name");
+            System.out.println("2. Show all products sorted by category name");
+            System.out.println("3. Show all products sorted by price");
+            System.out.println("4. Show products in stock");
+            System.out.println("5. Supply a product");
+            System.out.println("6. Retrieve products from stock");
+            System.out.println("7. Exit");
+            opt = Integer.parseInt(in.nextLine());
 
             switch (opt) {
-                case 1:
-                    for(int i=1; i<= ProductService.getProducts().size(); ++i) {
-                        System.out.println((i) + "." + ProductService.getProducts().get(i-1));
-                    }
+                case 1:{
+                    ListingItems.print(this.productsService.getProductsSortedByName());
                     break;
-                case 2:
-                    System.out.println("Product name:");
-                    s = in.nextLine().trim();
-                    System.out.println("Price:");
+                }
+                case 2:{
+                    ListingItems.print(this.productsService.getProductsSortedByCategory());
+                    break;
+                }
+                case 3:{
+                    ListingItems.print(this.productsService.getProductsSortedByPrice());
+                    break;
+                }
+                case 4:{
+                    ListingItems.print(this.stock.getProductsInStock());
+                    break;
+                }
+                case 5:{
+                    System.out.println("Pick the product you wish to be supplied");
+                    Product prod = (Product) ListingItems.pick(productsService.getProducts(), in);
+                    System.out.println("Enter a quantity for the chosen product (make sure it matches the product type)");
                     p = Float.parseFloat(in.nextLine());
-                    System.out.println("Choose Category of new product");
-                    for(int i=0; i<ProductService.getCategories().size(); ++i) {
-                        System.out.println("  " + (i+1) + "." + ProductService.getCategories().get(i).toString());
-                    }
-                    index = Integer.parseInt(in.nextLine());
+                    ProductBatch newBatch = distributorService.orderProductBatch(prod, p);
+                    stock.supplyProduct(newBatch);
 
-                    ///ProductService.addProduct(new Product(p, s, ProductService.getCategories().get(index-1)));
                     break;
-                case 3:
-                    System.out.println("Product name:");
-                    s = in.nextLine().trim();
-                    System.out.println("Price:");
+                }
+                case 6:{
+                    System.out.println("Pick the product you wish to be supplied");
+                    Product prod = (Product) ListingItems.pick(stock.getProductsInStock(), in);
+                    System.out.println("Enter a quantity for the chosen product (make sure it matches the product type)");
                     p = Float.parseFloat(in.nextLine());
-                    System.out.println("Choose Category of new product");
-                    for(int i=0; i<ProductService.getCategories().size(); ++i) {
-                        System.out.println("  " + (i+1) + "." + ProductService.getCategories().get(i).toString());
-                    }
-                    index = Integer.parseInt(in.nextLine());
-                    System.out.println("Days till the product expires:");
-                    d = Integer.parseInt(in.nextLine());
-                    calendar.add(Calendar.DATE, d);
-                    /// ProductService.addProduct(new PerishableProduct(p, s, ProductService.getCategories().get(index-1), d));
-                    calendar.add(Calendar.DATE, -d);
+                    if(stock.retrieveProductQuantity(prod, p))
+                        System.out.println("Quantity retrieved successfully");
+                    else
+                        System.out.println("Couldn't retrieve the given quantity");
+
                     break;
-                case 4:
-                    System.out.println("Index of product to be removed:");
-                    index = Integer.parseInt(in.nextLine());
-                    ProductService.removeProduct(index-1);
-                    break;
-                case 5:
-                    System.out.println("Index of product:");
-                    index = Integer.parseInt(in.nextLine());
-                    System.out.println("New price of the product:");
-                    p = Float.parseFloat(in.nextLine());
-                    ProductService.updateProductPrice(index-1, p);
-                    break;
-                case 6:
-                    for(ProductCategory category: ProductService.getCategories()){
-                        System.out.println(category);
-                    }
-                    break;
-                case 7:
-                    System.out.println("Category name:");
-                    s = in.nextLine();
-                    ProductService.addCategory(new ProductCategory(s));
-                    break;
-                case 8:
-                    ProductService.sortProductsByName();
-                    break;
-                case 9:
-                    ProductService.sortProductsByPrice();
-                    break;
-                case 10:
-                    ProductService.sortProductsByCategory();
-                    break;
-                default:
-                    System.out.println("Unknown option");
+                }
+                case 7:{
+                    in.close();
                     return;
+                }
+                default:{
+                    System.out.println("IDK m8; try something else pls");
+                }
             }
 
+            System.out.println("Press enter to return to the menu");
+            in.nextLine();
         }
 
 

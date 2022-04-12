@@ -81,7 +81,11 @@ public abstract class Product {
 
     @Override
     public String toString() {
-        return "Product Name: " + this.productName + "\nPrice: " + this.price + "\nCategory: " + this.category.toString() + "\n";
+        return "Product{" +
+                "productName='" + productName + '\'' +
+                ", price= " + price +
+                ", category=" + category +
+                '}';
     }
 
     @Override

@@ -22,4 +22,10 @@ public class PerishableWP extends WeightedProduct implements Perishable{
         return lifespan;
     }
 
+    @Override
+    public String toString() {
+        return "PerishableWP{" +
+                "lifespan=" + lifespan +
+                "} " + super.toString();
+    }
 }

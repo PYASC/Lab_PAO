@@ -13,7 +13,10 @@ public class ProductBatch {
     public ProductBatch(Product product, LocalDate productionDate, float quantity, Distributor distributor) {
         this.product = product;
         this.productionDate = productionDate;
-        this.setQuantity(quantity);
+        if(ProductBatch.isValidQuantity(quantity, this.product))
+            this.quantity = quantity;
+        else
+            this.quantity = 0;
         this.distributor = distributor;
     }
 
@@ -29,21 +32,8 @@ public class ProductBatch {
     }
 
     public void setQuantity(float quantity) {
-        if(quantity < 0){
-            System.out.println("Negative quantity"); // define a throwable error later
-            return;
-        }
-
-        if(this.product instanceof WeightedProduct){
+        if(ProductBatch.isValidQuantity(quantity, this.product))
             this.quantity = quantity;
-            return;
-        }
-
-        if(quantity - (int)quantity > 0){
-            System.out.println("Can't assign non integer to quantity for an UnitaryProduct"); // define a throwable error later for this case as well
-            return;
-        }
-        this.quantity = quantity;
     }
 
     public boolean isExpired(){
@@ -57,5 +47,20 @@ public class ProductBatch {
 
         return false;
     }
+    public static boolean isValidQuantity(float quantity, Product product){
+        if(quantity < 0){
+            System.out.println("Negative quantity"); // define a throwable error later
+            return false;
+        }
 
+        if(product instanceof WeightedProduct){
+            return true;
+        }
+
+        if(quantity - (int)quantity > 0){
+            System.out.println("Can't assign non integer to quantity for an UnitaryProduct"); // define a throwable error later for this case as well
+            return false;
+        }
+        return true;
+    }
 }

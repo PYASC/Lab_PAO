@@ -25,4 +25,10 @@ public class PerishableUP extends UnitaryProduct implements Perishable{
         return lifespan;
     }
 
+    @Override
+    public String toString() {
+        return "PerishableUP{" +
+                "lifespan=" + lifespan +
+                "} " + super.toString();
+    }
 }

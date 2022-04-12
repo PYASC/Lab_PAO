@@ -4,85 +4,43 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class ProductService {
-    private static List<Product> products;
-    private static List<ProductCategory> categories;
+public class ProductService implements IProductService {
+    private final List<Product> products;
 
-    static {
+    public ProductService(){
         products = new ArrayList<Product>();
-        categories = new ArrayList<ProductCategory>();
     }
-
-    public static void addProduct(Product p) {
+    @Override
+    public void addProduct(Product p) {
         products.add(p);
     }
-
-    public static void removeProduct(Product p) {
+    @Override
+    public void removeProduct(Product p) {
         products.remove(p);
     }
-    public static void removeProduct(int index) {
-        try {
-            products.remove(index);
-        }
-        catch (IndexOutOfBoundsException e){
-            System.out.println("Index out of bounds.");
-        }
-    }
+    @Override
+    public void updateProductPrice(Product product, float price) {
 
-    public static void updateProductPrice(int index, float newPrice) {
-        try {
-            products.get(index).setPrice(newPrice);
-        }
-        catch (IndexOutOfBoundsException e) {
-            System.out.println("Index out of bounds.");
-        }
     }
-    public static List<Product> getProducts() {
+    @Override
+    public List<Product> getProducts() {
         return new ArrayList<Product>(products);
     }
 
-    public static void sortProductsByPrice() {
+    @Override
+    public List<Product> getProductsSortedByPrice() {
         products.sort(new PriceComparator());
+        return this.products;
     }
-
-    public static void sortProductsByName() {
+    @Override
+    public List<Product> getProductsSortedByName() {
         products.sort(new NameComparator());
+        return this.products;
     }
 
-    public static void sortProductsByCategory() {
+    @Override
+    public List<Product> getProductsSortedByCategory() {
         products.sort(new CategoryComparator());
+        return this.products;
     }
-
-    public static void addCategory(ProductCategory cat) {
-        categories.add(cat);
-    }
-
-    public static void removeCategory(ProductCategory cat) {
-        categories.remove(cat);
-    }
-
-    public static void removeCategory(int index) {
-        try {
-            categories.remove(index);
-        }
-        catch (IndexOutOfBoundsException e) {
-            System.out.println("Index out of bounds.");
-        }
-    }
-
-    public static List<ProductCategory> getCategories() {
-        return new ArrayList<ProductCategory>(categories);
-    }
-
-    public static void sortCategoriesByName() {
-        categories.sort(new Comparator<ProductCategory>() {
-            @Override
-            public int compare(ProductCategory c1, ProductCategory c2) {
-                return c1.compareTo(c2);
-            }
-        });
-    }
-
-
-
 }

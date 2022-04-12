@@ -27,21 +27,34 @@ public class Distributor implements IDistributor{
 //        return new HashSet<Product>(products);
 //    }
 
+
+    public float getDiscount() {
+        return discount;
+    }
+
     public void addProduct(Product product) {
         this.products.add(product);
     }
 
     @Override
     public boolean hasProduct(Product product) {
-        for(Product p: this.products){
-            if(product.equals(p))
-                return true;
-        }
-        return false;
+        return this.products.contains(product);
     }
 
     @Override
     public ProductBatch orderProductBatch(Product product, float quantity) {
-        return new ProductBatch(product, LocalDate.now(), quantity, this);
+        if(this.hasProduct(product))
+            return new ProductBatch(product, LocalDate.now(), quantity, this);
+
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Distributor{" +
+                "name='" + name + '\'' +
+                ", products=" + products +
+                ", discount=" + discount +
+                '}';
     }
 }
