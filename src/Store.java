@@ -43,17 +43,11 @@ public class Store {
     public static void main(String[] args) {
 
         getInstance();
-        store.init();
-        /*System.out.println(store.productsService.getProducts());
-        System.out.println(store.productCategories);
-        System.out.println(store.distributorService.getDistributors());
-        System.out.println(store.stock.getProductsInStock());
-
-        Product p = (Product) ListingItems.pick(store.productsService.getProducts());
-        System.out.println("Picked Product: " + p.toString());*/
+        // store.init();
 
         try {
-            store.menu();
+            // store.menu();
+            System.out.println("ASD");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,7 +59,7 @@ public class Store {
 
 
     }
-
+    /*
     private void init(){
 
         productCategories.add(new ProductCategory("DairyProducts"));
@@ -176,6 +170,7 @@ public class Store {
 
 
     }
+    */
 
 
 }

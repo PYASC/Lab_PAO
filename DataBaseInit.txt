@@ -1,0 +1,92 @@
+create table categories(
+    categoryId int auto_increment primary key,
+    categoryName varchar(40)
+);
+
+insert into catecategoriesgories(categoryName) values ("Meat"), ("Dairy"), ("Fruits"), ("Honey"), ("Furniture"), ("Household things");
+
+create table products(
+    productId int auto_increment primary key,
+    productName varchar(40),
+    productPrice float4,
+    categoryId int,
+    foreign key (categoryId) references categories(categoryId) on delete cascade
+);
+
+insert into products(productName, productPrice, categoryId) 
+values ("Pork ribs", 44.5, 1), ("Chicken breasts", 38.75, 1), ("FIVO Milk 1L", 5, 2), ("Milk", 4, 2), ("Golden Apples", 7.4, 3),
+        ("Pears", 5.5, 3), ("Best Honey Ever 400g", 35, 4), ("Camping chair", 79.9, 5), ("Camping table", 150, 5), ("Chalk", 25, 6);
+
+
+create table unitary_products(
+    productId int primary key,
+    foreign key (productId) references products(productId) on delete cascade
+);
+
+insert into unitary_products(productId) values (7), (8), (9);
+
+create table weighted_products(
+    productId int primary key,
+    unit varchar(5),
+    foreign key (productId) references products(productId) on delete cascade
+);
+
+insert into weighted_products(productId, unit) values (10, "Kg");
+
+create table perishable_unitary_products(
+    productId int primary key,
+    lifespan int,
+    foreign key (productId) references products(productId) on delete cascade
+);
+
+insert into perishable_unitary_products(productId, lifespan) values (1, 7), (2, 5), (3, 3);
+
+
+create table perishable_weighted_products(
+    productId int primary key,
+    lifespan int,
+    unit varchar(5),
+    foreign key (productId) references products(productId) on delete cascade
+);
+
+insert into perishable_weighted_products(productId, lifespan, unit) values (4, 2, "L"), (5, 20, "Kg"), (6, 20, "Kg");
+
+create table distributors(
+    distributorId int auto_increment primary key,
+    distributorName varchar(40),
+    discount float
+);
+
+insert into distributors(distributorName, discount) 
+values ("Cheapest ever", 0.3), ("Quality comes first", 0.05), ("Tradeoff", 0.2);
+
+create table distributed_products(
+    distributorId int,
+    productId int,
+    primary key (distributorId, productId),
+    foreign key (distributorId) references distributors(distributorId) on delete cascade,
+    foreign key (productId) references products(productId) on delete cascade
+);
+
+insert into distributed_products(distributorId, productId)
+values (1, 4), (1, 10), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (3, 3), (3, 4), (3, 8), (3, 9), (3, 10);
+
+create table product_batches(
+    batchId int auto_increment primary key,
+    productId int,
+    distributorId int,
+    quantity float,
+    production_date varchar(40), -- store and retrieve as string; convert to date only in java
+    foreign key (distributorId) references distributors(distributorId) on delete cascade,
+    foreign key (productId) references products(productId) on delete cascade
+);
+
+drop table distributed_products;
+drop table distributors;
+drop table unitary_products;
+drop table weighted_products;
+drop table perishable_unitary_products;
+drop table perishable_weighted_products;
+drop table products;
+drop table product_batches;
+
