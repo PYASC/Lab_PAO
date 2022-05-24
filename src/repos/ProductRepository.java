@@ -22,19 +22,6 @@ public class ProductRepository {
         return result.get(0);
     }
 
-    public static List<Integer> getDistributorIdsForProduct(int productId){
-        String sql = "select distributorId from distributed_products where productId = " + productId;
-        return QueryExecutor.executeReadQuery(sql, resultSet -> {
-            try {
-                return resultSet.getInt("distributorId");
-            }
-            catch (SQLException e){
-                e.printStackTrace();
-            }
-            return 0;
-        });
-    }
-
     public static List<UnitaryProductEntity> getAll(){
         String sql = "select * from products";
         return QueryExecutor.executeReadQuery(sql, Mappers::UPEMapper);
@@ -58,9 +45,9 @@ public class ProductRepository {
         });
     }
 
-    public static List<WeightedProductEntity> getAllUPE(){
+    public static List<UnitaryProductEntity> getAllUPE(){
         String sql = "select *  from unitary_products up join products p on up.productId = p.productId ";
-        return QueryExecutor.executeReadQuery(sql, Mappers::WPEMapper);
+        return QueryExecutor.executeReadQuery(sql, Mappers::UPEMapper);
     }
 
     public static List<WeightedProductEntity> getAllWPE(){
@@ -87,6 +74,40 @@ public class ProductRepository {
         return QueryExecutor.executeUpdateQuery(sql);
     }
 
+    public static List<Integer> getDistributorIdsForProduct(int productId){
+        String sql = "select distributorId from distributed_products where productId = " + productId;
+        return QueryExecutor.executeReadQuery(sql, resultSet -> {
+            try {
+                return resultSet.getInt("distributorId");
+            }
+            catch (SQLException e){
+                e.printStackTrace();
+            }
+            return 0;
+        });
+    }
+
+    public static int addProduct(String productName, float productPrice, int categoryId){
+        String sql = "insert into products(productName, productPrice, categoryId) values ('" + productName + "', " + productPrice + ", " + categoryId + ")";
+        return QueryExecutor.executeUpdateQuery(sql);
+    }
+
+    public static int addUPE(int productId){
+        String sql = "insert into unitary_products(productID) values (" + productId + ")";
+        return QueryExecutor.executeUpdateQuery(sql);
+    }
+    public static int addPerishableUPE(int productId, int lifespan){
+        String sql = "insert into perishable_unitary_products(productID, lifespan) values (" + productId + ", " + lifespan + ")";
+        return QueryExecutor.executeUpdateQuery(sql);
+    }
+    public static int addWPE(int productId, String unit){
+        String sql = "insert into weighted_products(productID, unit) values (" + productId + ", '" + unit + "')";
+        return QueryExecutor.executeUpdateQuery(sql);
+    }
+    public static int addPerishableWPE(int productId, String unit, int lifespan){
+        String sql = "insert into perishable_weighted_products(productID, unit, lifespan) values (" + productId + ", '" + unit + "', " + lifespan + ")";
+        return QueryExecutor.executeUpdateQuery(sql);
+    }
 
 
     public static CategoryEntity getCategoryById(int categoryId){

@@ -5,12 +5,14 @@ import Distributor.Distributor;
 import java.time.LocalDate;
 
 public class ProductBatch {
+    private final int id;
     private final Product product;
     private final LocalDate productionDate;
     private float quantity;
     private final Distributor distributor;
 
-    public ProductBatch(Product product, LocalDate productionDate, float quantity, Distributor distributor) {
+    public ProductBatch(int id, Product product, LocalDate productionDate, float quantity, Distributor distributor) {
+        this.id = id;
         this.product = product;
         this.productionDate = productionDate;
         if(ProductBatch.isValidQuantity(quantity, this.product))
@@ -34,6 +36,14 @@ public class ProductBatch {
     public void setQuantity(float quantity) {
         if(ProductBatch.isValidQuantity(quantity, this.product))
             this.quantity = quantity;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public LocalDate getProductionDate() {
+        return productionDate;
     }
 
     public boolean isExpired(){

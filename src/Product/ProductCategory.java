@@ -3,10 +3,16 @@ package Product;
 import org.jetbrains.annotations.NotNull;
 
 public class ProductCategory implements Comparable<ProductCategory>{
+    private final int categoryId;
     private final String categoryName;
 
-    public ProductCategory(String categoryName) {
+    public ProductCategory(int categoryId, String categoryName) {
+        this.categoryId = categoryId;
         this.categoryName = categoryName;
+    }
+
+    public int getCategoryId(){
+        return categoryId;
     }
 
     public String getCategoryName() {

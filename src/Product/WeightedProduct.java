@@ -3,13 +3,13 @@ package Product;
 public class WeightedProduct extends Product{ // The price is considered price per unit of measurement
     private final MeasuringUnit measuringUnit;
 
-    public WeightedProduct(float price, String productName, MeasuringUnit measuringUnit) {
-        super(price, productName);
+    public WeightedProduct(int id, float price, String productName, MeasuringUnit measuringUnit) {
+        super(id, price, productName);
         this.measuringUnit = measuringUnit;
     }
 
-    public WeightedProduct(float price, String productName, ProductCategory category, MeasuringUnit measuringUnit) {
-        super(price, productName, category);
+    public WeightedProduct(int id, float price, String productName, ProductCategory category, MeasuringUnit measuringUnit) {
+        super(id, price, productName, category);
         this.measuringUnit = measuringUnit;
     }
 

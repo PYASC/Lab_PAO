@@ -1,5 +1,6 @@
 package repos;
 
+import Distributor.Distributor;
 import Entities.DistributorEntity;
 import Entities.DistributorProductEntity;
 import Exceptions.DataBaseException;
@@ -27,22 +28,25 @@ public class DistributorRepository {
         return QueryExecutor.executeReadQuery(sql, Mappers::DistributorMapper);
     }
 
-    public static void updateDistributorDiscount(int distributorId, float newDiscount){
+    public static List<DistributorEntity> getDistributorsForProduct(int productId){
+        String sql = "select * from distributors ds where exists (select * from distributed_products dp where ds.distributorId = dp.distributorId";
+        sql += "and dp.productId = " + productId + ")";
+        return QueryExecutor.executeReadQuery(sql, Mappers::DistributorMapper);
+    }
+
+    public static int updateDistributorDiscount(int distributorId, float newDiscount){
         String sql = "update distributor set discount = " + newDiscount + " where distributorId = " + distributorId;
-        QueryExecutor.executeUpdateQuery(sql);
+        return QueryExecutor.executeUpdateQuery(sql);
     }
 
-    public static void deleteDistributor(int distributorId){
+    public static int deleteDistributor(int distributorId){
         String sql = "delete from distributors where distributorId = " + distributorId;
-        QueryExecutor.executeUpdateQuery(sql);
+        return QueryExecutor.executeUpdateQuery(sql);
     }
 
-    public static boolean addDistributor(String name, float discount){
+    public static int addDistributor(String name, float discount){
         String sql = "insert into distributors(distributorName, discount) values ('" + name + "', " + discount + ")";
-        if(QueryExecutor.executeUpdateQuery(sql) > 0) // insert succeeded
-            return true;
-
-        return false;
+        return  QueryExecutor.executeUpdateQuery(sql);
     }
 
     public static List<Integer> getProductIdsForDistributor(int distributorId){

@@ -8,15 +8,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Distributor implements IDistributor{
+    private final int id;
     private final String name;
     private final Set<Product> products; // products that the distributor has to offer
     private final float discount; // when buying from this distributor the store only pays (1-discount)*price for a certain product
 
 
-    public Distributor(String name, float discount) {
+    public Distributor(int id, String name, float discount) {
+        this.id = id;
         this.name = name;
         this.discount = discount;
         products = new HashSet<Product>();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -44,7 +50,7 @@ public class Distributor implements IDistributor{
     @Override
     public ProductBatch orderProductBatch(Product product, float quantity) {
         if(this.hasProduct(product))
-            return new ProductBatch(product, LocalDate.now(), quantity, this);
+            return new ProductBatch(id, product, LocalDate.now(), quantity, this);
 
         return null;
     }

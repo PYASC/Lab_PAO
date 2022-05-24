@@ -37,6 +37,22 @@ public class BatchesRepository {
         return QueryExecutor.executeReadQuery(sql, Mappers::ProductBatchMapper);
     }
 
+    public static int removeBatch(int batchId){
+        String sql = "delete from product_batches where batchId = " + batchId;
+        return QueryExecutor.executeUpdateQuery(sql);
+    }
+
+    public static int addBatch(int productId, int distributorId, float quantity, String productionDate){
+        String sql = "insert into product_batches(productId, distributorId, quantity, production_date) values (";
+        sql = sql + productId + ", " + distributorId + ", " + quantity + ", '" + productionDate + "')";
+        return QueryExecutor.executeUpdateQuery(sql);
+    }
+
+    public static int updateBatchQuantity(int batchId, float newQuantity){
+        String sql = "update product_batches set quantity = " + newQuantity + " where batchId = " + batchId;
+        return QueryExecutor.executeUpdateQuery(sql);
+    }
+
 
 
 }

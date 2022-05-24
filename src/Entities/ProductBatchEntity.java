@@ -54,4 +54,12 @@ public class ProductBatchEntity {
     public void setProductionDate(String productionDate) {
         this.productionDate = productionDate;
     }
+
+    public float getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(float quantity) {
+        this.quantity = quantity;
+    }
 }

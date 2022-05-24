@@ -26,27 +26,21 @@ class CategoryComparator implements Comparator<Product> {
 }
 
 
-public abstract class Product {
-    private static int productCount;
+public class Product {
     private final int productId;
     private float price;
     private final String productName;
-    private final ProductCategory category;
+    private ProductCategory category;
 
-
-    static {
-        productCount = 0;
-    }
-
-    public Product(float price, String productName) {
-        this.productId = ++Product.productCount;
+    public Product(int productId, float price, String productName) {
+        this.productId = productId;
         this.price = price;
         this.productName = productName;
         this.category = null;
     }
 
-    public Product(float price, String productName, ProductCategory category) {
-        this.productId = ++ Product.productCount;
+    public Product(int productId, float price, String productName, ProductCategory category) {
+        this.productId = productId;
         this.price = price;
         this.productName = productName;
         this.category = category;
@@ -78,6 +72,14 @@ public abstract class Product {
     public String getProductName() {
         return productName;
     }
+
+    public int getProductId(){
+        return productId;
+    }
+    public void setCategory(ProductCategory category){
+        this.category = category;
+    }
+
 
     @Override
     public String toString() {

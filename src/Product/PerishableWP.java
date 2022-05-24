@@ -2,13 +2,13 @@ package Product;
 
 public class PerishableWP extends WeightedProduct implements Perishable{
     private final int lifespan; // days till expiry after production
-    public PerishableWP(float price, String productName, MeasuringUnit measuringUnit, int lifespan) {
-        super(price, productName, measuringUnit);
+    public PerishableWP(int id, float price, String productName, MeasuringUnit measuringUnit, int lifespan) {
+        super(id, price, productName, measuringUnit);
         this.lifespan = lifespan;
     }
 
-    public PerishableWP(float price, String productName, ProductCategory category, MeasuringUnit measuringUnit, int lifespan) {
-        super(price, productName, category, measuringUnit);
+    public PerishableWP(int id, float price, String productName, ProductCategory category, MeasuringUnit measuringUnit, int lifespan) {
+        super(id, price, productName, category, measuringUnit);
         this.lifespan = lifespan;
     }
 
