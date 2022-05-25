@@ -65,12 +65,12 @@ public class ProductRepository {
     }
 
     public static int removeProduct(int productId){
-        String sql = "delete from productId where productId = " + productId;
+        String sql = "delete from products where productId = " + productId;
         return QueryExecutor.executeUpdateQuery(sql);
     }
 
     public static int updateProductPrice(int productId, float newPrice){
-        String sql = "update products set price = " + newPrice + " where productId = "+productId;
+        String sql = "update products set productPrice = " + newPrice + " where productId = "+productId;
         return QueryExecutor.executeUpdateQuery(sql);
     }
 
@@ -89,7 +89,16 @@ public class ProductRepository {
 
     public static int addProduct(String productName, float productPrice, int categoryId){
         String sql = "insert into products(productName, productPrice, categoryId) values ('" + productName + "', " + productPrice + ", " + categoryId + ")";
-        return QueryExecutor.executeUpdateQuery(sql);
+        QueryExecutor.executeUpdateQuery(sql);
+        sql = "select productId from products where productId = (select max(productId) from products)";
+        return QueryExecutor.executeReadQuery(sql, resultSet -> {
+            try {
+                return (Integer) resultSet.getInt("productId");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }).get(0);
     }
 
     public static int addUPE(int productId){

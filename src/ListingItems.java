@@ -20,7 +20,7 @@ public abstract class ListingItems {
                 i = Integer.parseInt(in.nextLine().trim());
                 picked = l.get(i-1);
             }
-            catch(ArrayIndexOutOfBoundsException e){
+            catch(IndexOutOfBoundsException e){
                 System.out.println("Index out of range; Try again.");
             }
             catch (NumberFormatException e){

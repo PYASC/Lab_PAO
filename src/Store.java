@@ -1,5 +1,10 @@
 import Distributor.Distributor;
 import Product.Product;
+import Product.UnitaryProduct;
+import Product.WeightedProduct;
+import Product.PerishableUP;
+import Product.PerishableWP;
+import Product.MeasuringUnit;
 import Product.ProductBatch;
 import Product.ProductCategory;
 import Services.DistributorService;
@@ -46,7 +51,13 @@ public class Store {
             System.out.println("20. Add distributor");
             System.out.println("21. Remove distributor");
             System.out.println("0. Exit");
-            opt = Integer.parseInt(in.nextLine());
+            try{
+                opt = Integer.parseInt(in.nextLine());
+            }
+            catch (NumberFormatException e){
+                System.out.println("Not a number; menu closing....");
+                return;
+            }
 
             switch (opt) {
                 case 1:{
@@ -83,12 +94,39 @@ public class Store {
                     break;
                 }
                 case 7:{
-                    System.out.println("Enter product name:");
-                    String name = in.nextLine();
-                    System.out.println("Enter product price:");
-                    float price = in.nextFloat();
+                    System.out.println("Choose a category for the new product:");
                     ProductCategory category = (ProductCategory) ListingItems.pick(ProductService.getAllCategories(), in);
-                    ProductService.addProduct(name, price, category.getCategoryId());
+                    if(category == null)
+                        System.out.println("No category to choose from. How about adding one to the database first?");
+                    else{
+                        System.out.println("Enter product name:");
+                        String name = in.nextLine();
+                        System.out.println("Enter product price:");
+                        float price = in.nextFloat();
+                        Product p = new Product(0, price, name, category); // use id 0 to mark temporary objects;
+                        System.out.println("Is the product sold as a unit?[y/n]"); in.nextLine();
+                        String s = in.nextLine().trim();
+                        if(s.equalsIgnoreCase("y"))
+                            p = new UnitaryProduct(p);
+                        else{
+                            System.out.println("Choose the unit of measure:");
+                            List<MeasuringUnit> l = new ArrayList<>(); l.add(MeasuringUnit.Kg); l.add(MeasuringUnit.L);
+                            MeasuringUnit m = (MeasuringUnit) ListingItems.pick(l, in);
+                            p = new WeightedProduct(p, m);
+                        }
+
+                        System.out.println("Is the product perishable?[y/n]");
+                        s = in.nextLine().trim();
+                        if(s.equalsIgnoreCase("y")){
+                            System.out.println("Enter the lifespan of the product in number of days:");
+                            int n = in.nextInt();
+                            if(p instanceof UnitaryProduct)
+                                p = new PerishableUP(p, n);
+                            else
+                                p = new PerishableWP(p, ((WeightedProduct) p).getMeasuringUnit(), n);
+                        }
+                        ProductService.addProduct(p);
+                    }
                     break;
                 }
                 case 8:{
@@ -99,9 +137,13 @@ public class Store {
                 case 9:{
                     Product product = (Product) ListingItems.pick(ProductService.getAllProducts(), in);
                     Distributor distributor = (Distributor) ListingItems.pick(DistributorService.getDistributorsForProduct(product), in);
-                    System.out.println("Enter quantity (integer):");
-                    int quantity = in.nextInt();
-                    ProductService.addBatch(product, distributor, quantity);
+                    if(distributor == null)
+                        System.out.println("No distributors for the chosen products");
+                    else{
+                        System.out.println("Enter quantity (integer):");
+                        int quantity = in.nextInt();
+                        ProductService.addBatch(product, distributor, quantity);
+                    }
                     break;
                 }
                 case 10:{
@@ -171,7 +213,12 @@ public class Store {
                 }
                 case 14:{
                     ProductCategory category = (ProductCategory) ListingItems.pick(ProductService.getAllCategories(), in);
-                    ProductService.removeCategory(category);
+                    if(category == null){
+                        System.out.println("No categories registered in the database");
+                    }
+                    else {
+                        ProductService.removeCategory(category);
+                    }
                     break;
                 }
                 case 15:{
@@ -210,14 +257,7 @@ public class Store {
                         System.out.println("No distributors in database");
                         break;
                     }
-                    Set<Product> products = new HashSet<>(ProductService.getAllProducts());
-                    List<Product> productsToRemove = ProductService.getProductsForDistributor(d);
-                    for(Product p: productsToRemove){
-                        if(products.contains(p))
-                            products.remove(p); // remove products that are already distributed by that this distributor;
-                                                // all this logic should be in the Product service; Bad architecture, a bit too late to fix
-                    }
-                    Product p = (Product) ListingItems.pick(Arrays.asList(products.toArray()), in);
+                    Product p = (Product) ListingItems.pick(ProductService.getUnownedProductsForDistributor(d), in);
                     if(p == null){
                         System.out.println("Can't add any new product for the chosen distributor");
                     }
@@ -235,9 +275,10 @@ public class Store {
                     Product p = (Product) ListingItems.pick(ProductService.getProductsForDistributor(d), in);
                     if(p == null){
                         System.out.println("No products distributed for the chosen distributor");
-                        break;
                     }
-                    DistributorService.removeProductForDistributor(d, p);
+                    else{
+                        DistributorService.removeProductForDistributor(d, p);
+                    }
                     break;
                 }
                 case 20:{

@@ -24,4 +24,8 @@ public class WeightedProduct extends Product{ // The price is considered price p
                 "measuringUnit=" + measuringUnit +
                 "} " + super.toString();
     }
+
+    public MeasuringUnit getMeasuringUnit() {
+        return measuringUnit;
+    }
 }

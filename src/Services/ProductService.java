@@ -161,7 +161,13 @@ public class ProductService {
     }
 
     public static List<Product> getAllProducts(){
-        return mapEntityToProduct(ProductRepository.getAll());
+        List<Product> products = new ArrayList<>();
+        products.addAll(getAllUP());
+        products.addAll(getAllWP());
+        products.addAll(getAllPerishableUP());
+        products.addAll(getAllPerishableWP());
+
+        return products;
     }
 
     public static List<Product> getAllProductsSortedByName(){
@@ -196,10 +202,14 @@ public class ProductService {
     }
 
     public static List<Product> getProductsInCategory(ProductCategory category){
+        if(category == null)
+            return new ArrayList<>();
         return mapEntityToProduct(ProductRepository.getAllByCategoryId(category.getCategoryId()));
     }
 
     public static List<Product> getProductsForDistributor(Distributor d){
+        if(d == null)
+            return new ArrayList<>();
         List<Integer> l = DistributorRepository.getProductIdsForDistributor(d.getId());
         List<Product> products = new ArrayList<>();
         for(Integer id : l){
@@ -208,6 +218,17 @@ public class ProductService {
                 products.add(p);
         }
         return products;
+    }
+
+    public static List<Product> getUnownedProductsForDistributor(Distributor d){
+        if(d == null)
+            return new ArrayList<>();
+        List<Product> ownedProducts = getProductsForDistributor(d);
+        Set<Product> products = new HashSet<>(getAllProducts());
+        for(Product p:ownedProducts)
+            products.remove(p);
+
+        return products.stream().toList();
     }
 
     public static List<Product> getProductsInStock(){
@@ -222,15 +243,27 @@ public class ProductService {
     }
 
 
-    public static int addProduct(String name, float price, int categoryId){
-        return ProductRepository.addProduct(name, price, categoryId);
+    public static int addProduct(Product p){
+        int id = ProductRepository.addProduct(p.getProductName(), p.getPrice(), p.getCategory().getCategoryId());
+        if(p instanceof PerishableWP)
+            return ProductRepository.addPerishableWPE(id, ((PerishableWP) p).getMeasuringUnit().toString(), ((PerishableWP) p).getLifespan());
+        if(p instanceof PerishableUP)
+            return ProductRepository.addPerishableUPE(id,((PerishableUP) p).getLifespan());
+        if(p instanceof WeightedProduct)
+            return ProductRepository.addWPE(id, ((WeightedProduct) p).getMeasuringUnit().toString());
+
+        return ProductRepository.addUPE(id);
     }
 
     public static int updateProductPrice(Product p, float newPrice){
+        if(p == null)
+            return 0;
         return ProductRepository.updateProductPrice(p.getProductId(), newPrice);
     }
 
     public static int removeProduct(Product p){
+        if(p==null)
+            return 0;
         return ProductRepository.removeProduct(p.getProductId());
     }
 
@@ -261,6 +294,8 @@ public class ProductService {
     }
 
     public static List<ProductBatch> getProductBatches(Product p){
+        if(p == null)
+            return new ArrayList<>();
         return mapEntityToPB(BatchesRepository.getAllByProductId(p.getProductId()));
     }
 
@@ -277,14 +312,20 @@ public class ProductService {
     }
 
     public static int addBatch(Product p, Distributor d, float quantity){
+        if(p == null)
+            return 0;
         return BatchesRepository.addBatch(p.getProductId(), d.getId(), quantity, LocalDate.now().toString());
     }
 
     public static int removeBatch(ProductBatch pb){
+        if(pb == null)
+            return 0;
         return BatchesRepository.removeBatch(pb.getId());
     }
 
     public static int updateBatchQuantity(ProductBatch pb, int newQuantity){
+        if(pb == null)
+            return 0;
         return BatchesRepository.updateBatchQuantity(pb.getId(), newQuantity);
     }
 

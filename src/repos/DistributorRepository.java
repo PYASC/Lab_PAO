@@ -29,13 +29,13 @@ public class DistributorRepository {
     }
 
     public static List<DistributorEntity> getDistributorsForProduct(int productId){
-        String sql = "select * from distributors ds where exists (select * from distributed_products dp where ds.distributorId = dp.distributorId";
-        sql += "and dp.productId = " + productId + ")";
+        String sql = "select * from distributors ds where exists (select * from distributed_products dp where dp.distributorId = ds.distributorId";
+        sql += " and dp.productId = " + productId + ")";
         return QueryExecutor.executeReadQuery(sql, Mappers::DistributorMapper);
     }
 
     public static int updateDistributorDiscount(int distributorId, float newDiscount){
-        String sql = "update distributor set discount = " + newDiscount + " where distributorId = " + distributorId;
+        String sql = "update distributors set discount = " + newDiscount + " where distributorId = " + distributorId;
         return QueryExecutor.executeUpdateQuery(sql);
     }
 
