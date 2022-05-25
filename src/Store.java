@@ -1,17 +1,7 @@
-import Client.Client;
 import Distributor.Distributor;
-import Distributor.IDistributorService;
 import Product.Product;
 import Product.ProductBatch;
-import Product.UnitaryProduct;
-import Product.WeightedProduct;
-import Product.PerishableUP;
-import Product.PerishableWP;
 import Product.ProductCategory;
-import Product.MeasuringUnit;
-import Product.IProductService;
-import Product.IStock;
-import Product.Stock;
 import Services.DistributorService;
 import Services.ProductService;
 
@@ -19,89 +9,21 @@ import java.util.*;
 
 
 public class Store {
-//    private final List<ProductCategory> productCategories;
-//    private final IProductService productsService;
-//    private final IDistributorService distributorService;
-//    private final IStock stock;
-    //private final List<Client> clients;
-
-   // private static Store store = null;
-
-//    private Store() {
-//        this.productCategories = new ArrayList<ProductCategory>();
-//        this.productsService = new ProductService();
-//        this.distributorService = new DistributorService();
-//        this.stock = new Stock();
-//        //this.clients = new ArrayList<Client>();
-//    }
-
-//    public static Store getInstance(){
-//        if(Store.store == null)
-//            Store.store = new Store();
-//        return store;
-//    }
     public static void main(String[] args) {
-
-        // getInstance();
-        // store.init();
-
         try {
-            // store.menu();
-            System.out.println("ASD");
+            menu();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /*finally { /// used for saving to csv and db later
-            //Store.saveCSV();
-            //Store.saveDB();
-        }*/
+
 
     }
-    /*
-    private void init(){
-
-        productCategories.add(new ProductCategory("DairyProducts"));
-        productCategories.add(new ProductCategory("Meat"));
-        productCategories.add(new ProductCategory("Honey"));
-        productCategories.add(new ProductCategory("Furniture"));
-
-        productsService.addProduct(new PerishableWP(25.49f, "Grounded Beef", productCategories.get(1), MeasuringUnit.KG, 7));
-        productsService.addProduct(new PerishableUP(4.5f, "Milk bottle", productCategories.get(0),3));
-        productsService.addProduct(new UnitaryProduct(44.5f, "Wild Honey 450g", productCategories.get(2)));
-        productsService.addProduct(new PerishableUP(28f, "Smoked pork ribs", productCategories.get(1),28));
-        productsService.addProduct(new UnitaryProduct(140f, "Simple Chair", productCategories.get(3)));
-        productsService.addProduct(new UnitaryProduct(450f, "Coffee table", productCategories.get(3)));
-
-        distributorService.addDistributor(new Distributor("HLB", 0.08f));
-        distributorService.addDistributor(new Distributor("La 45 de pasi", 0.1f));
-        distributorService.addDistributor(new Distributor("Mini Image", 0.15f));
-
-        List<Distributor> d = distributorService.getDistributors();
-        d.get(0).addProduct(productsService.getProducts().get(0));
-        d.get(0).addProduct(productsService.getProducts().get(2));
-        d.get(0).addProduct(productsService.getProducts().get(3));
-
-
-        d.get(1).addProduct(productsService.getProducts().get(1));
-        d.get(1).addProduct(productsService.getProducts().get(4));
-
-        d.get(2).addProduct(productsService.getProducts().get(5));
-        d.get(2).addProduct(productsService.getProducts().get(1));
-
-        stock.supplyProduct(distributorService.orderProductBatch(productsService.getProducts().get(3), 2f));
-        stock.supplyProduct(distributorService.orderProductBatch(productsService.getProducts().get(1), 2f));
-        stock.supplyProduct(distributorService.orderProductBatch(productsService.getProducts().get(4), 2f));
-
-    }
-    */
-
     private static void menu() {
         Scanner in = new Scanner(System.in);
         int opt;
         ProductService.removeExpiredBatches();
 
         while(true){
-
             System.out.println(" 1. Show all products sorted by name");
             System.out.println(" 2. Show all products sorted by category");
             System.out.println(" 3. Show all products sorted by price");
@@ -110,15 +32,12 @@ public class Store {
             System.out.println(" 6. Update product price");
             System.out.println(" 7. Create new product");
             System.out.println(" 8. Remove product");
-
             System.out.println(" 9. Supply a product");
             System.out.println("10. Retrieve products from stock");
-
             System.out.println("11. Show all categories");
             System.out.println("12. Rename a category");
             System.out.println("13. Create a new category");
             System.out.println("14. Delete a category (and all the products associated with that category)");
-
             System.out.println("15. Show all distributors");
             System.out.println("16. Show a distributor and his distributed products");
             System.out.println("17. Update distributor discount");
@@ -126,7 +45,6 @@ public class Store {
             System.out.println("19. Remove distributed product for a distributor");
             System.out.println("20. Add distributor");
             System.out.println("21. Remove distributor");
-
             System.out.println("0. Exit");
             opt = Integer.parseInt(in.nextLine());
 
@@ -234,7 +152,6 @@ public class Store {
                     }
                     break;
                 }
-
                 case 11:{
                     ListingItems.print(ProductService.getAllCategories());
                     break;
@@ -257,7 +174,95 @@ public class Store {
                     ProductService.removeCategory(category);
                     break;
                 }
-
+                case 15:{
+                    ListingItems.print(DistributorService.getAll());
+                    break;
+                }
+                case 16:{
+                    Distributor d = (Distributor) ListingItems.pick(DistributorService.getAll(), in);
+                    if(d == null){
+                        System.out.println("No distributors in database");
+                    }
+                    else{
+                        System.out.println(d.present());
+                    }
+                    break;
+                }
+                case 17:{
+                    Distributor d = (Distributor) ListingItems.pick(DistributorService.getAll(), in);
+                    if(d == null){
+                        System.out.println("No distributors in database");
+                        break;
+                    }
+                    System.out.println("Enter new discount (float between 0 and 1)");
+                    Float discount = in.nextFloat();
+                    if(discount<0 || discount>1){
+                        System.out.println("Invalid number; Better luck next time");
+                    }
+                    else{
+                        DistributorService.updateDistributorDiscount(d, discount);
+                    }
+                    break;
+                }
+                case 18:{
+                    Distributor d = (Distributor) ListingItems.pick(DistributorService.getAll(), in);
+                    if(d == null){
+                        System.out.println("No distributors in database");
+                        break;
+                    }
+                    Set<Product> products = new HashSet<>(ProductService.getAllProducts());
+                    List<Product> productsToRemove = ProductService.getProductsForDistributor(d);
+                    for(Product p: productsToRemove){
+                        if(products.contains(p))
+                            products.remove(p); // remove products that are already distributed by that this distributor;
+                                                // all this logic should be in the Product service; Bad architecture, a bit too late to fix
+                    }
+                    Product p = (Product) ListingItems.pick(Arrays.asList(products.toArray()), in);
+                    if(p == null){
+                        System.out.println("Can't add any new product for the chosen distributor");
+                    }
+                    else{
+                        DistributorService.addProductForDistributor(d, p);
+                    }
+                    break;
+                }
+                case 19:{
+                    Distributor d = (Distributor) ListingItems.pick(DistributorService.getAll(), in);
+                    if(d == null){
+                        System.out.println("No distributors in database");
+                        break;
+                    }
+                    Product p = (Product) ListingItems.pick(ProductService.getProductsForDistributor(d), in);
+                    if(p == null){
+                        System.out.println("No products distributed for the chosen distributor");
+                        break;
+                    }
+                    DistributorService.removeProductForDistributor(d, p);
+                    break;
+                }
+                case 20:{
+                    System.out.println("Enter distributor name:");
+                    String name = in.nextLine();
+                    System.out.println("Enter discount offered by the distributor (float between 0 and 1");
+                    Float discount = in.nextFloat();
+                    if(discount<0 || discount>1){
+                        System.out.println("Invalid number; Better luck next time");
+                    }
+                    else{
+                        DistributorService.addDistributor(name, discount);
+                    }
+                    break;
+                }
+                case 21:{
+                    Distributor d = (Distributor) ListingItems.pick(DistributorService.getAll(), in);
+                    if(d == null){
+                        System.out.println("No distributors in database");
+                    }
+                    else{
+                        DistributorService.removeDistributor(d);
+                    }
+                    break;
+                }
                 case 0:{
                     in.close();
                     System.out.println("Closing manager..."); // all changes are committed to the database so i can just close; no need for an extra save or something like that
@@ -271,9 +276,5 @@ public class Store {
             System.out.println("Press enter to return to the menu");
             in.nextLine();
         }
-
-
     }
-
-
 }

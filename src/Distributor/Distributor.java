@@ -4,7 +4,9 @@ import Product.Product;
 import Product.ProductBatch;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Distributor implements IDistributor{
@@ -59,8 +61,17 @@ public class Distributor implements IDistributor{
     public String toString() {
         return "Distributor{" +
                 "name='" + name + '\'' +
-                ", products=" + products +
                 ", discount=" + discount +
                 '}';
     }
+    public String present() {
+        String toReturn =  "Distributor: " +  name + " offers a discount of " + discount + "\nOffered products:\n";
+        List<Product> l = new ArrayList<Product>(this.products);
+        for(Product p: l){
+            toReturn += "\t" + p.getProductName() + "\n";
+        }
+        return toReturn;
+    }
+
+
 }

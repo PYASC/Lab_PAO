@@ -3,6 +3,7 @@ package Services;
 import Distributor.Distributor;
 import Entities.*;
 import repos.BatchesRepository;
+import repos.DistributorRepository;
 import repos.ProductRepository;
 
 import java.time.LocalDate;
@@ -196,6 +197,17 @@ public class ProductService {
 
     public static List<Product> getProductsInCategory(ProductCategory category){
         return mapEntityToProduct(ProductRepository.getAllByCategoryId(category.getCategoryId()));
+    }
+
+    public static List<Product> getProductsForDistributor(Distributor d){
+        List<Integer> l = DistributorRepository.getProductIdsForDistributor(d.getId());
+        List<Product> products = new ArrayList<>();
+        for(Integer id : l){
+            Product p = getProduct(id);
+            if(p != null)
+                products.add(p);
+        }
+        return products;
     }
 
     public static List<Product> getProductsInStock(){
